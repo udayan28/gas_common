@@ -69,3 +69,31 @@ function getXBusinessdayBefore(day, x) {
   
   return sbtDay.format('YYYY/MM/DD');
 };
+
+// 日付を渡すとその月の営業日のリストを返す
+function getBussinesdays(day){
+  
+  var bizday = [];
+  
+  // 日本の祝日読み込み
+  var jpCal = CalendarApp.getCalendarById('ja.japanese#holiday@group.v.calendar.google.com');
+  
+  // 指定月の日付リストの取得
+  var dayM = Moment.moment(day);
+  var firstDayOfMonthM = dayM.startOf('month');
+  var firstDayOfMonth = firstDayOfMonthM.toString();
+  
+  var daysOfMonthM = firstDayOfMonthM.daysInMonth();
+  
+  for (var i = 0; i < daysOfMonthM; i++){
+    var daym = Moment.moment(firstDayOfMonth);
+    var tmpDay = daym.add(i, 'days');
+    
+    if ( jpCal.getEventsForDay(tmpDay.toDate()).length === 0　&& tmpDay.weekday() != 0 && tmpDay.weekday() != 6 ){
+      //Logger.log(tmpDay.toString());
+      bizday.push(tmpDay.toString());
+    }; 
+  };
+  
+  return bizday;
+};
